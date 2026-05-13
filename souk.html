@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Connect Morocco - البوابة المهنية للألعاب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black-primary: #0a0a0a;
+            --black-secondary: #1a1a2e;
+            --black-card: #16213e;
+            --purple-neon: #b026ff;
+            --purple-light: #d946ef;
+            --purple-dark: #7c3aed;
+            --cyan-neon: #00f5ff;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8d1;
+            --gradient-purple: linear-gradient(135deg, #b026ff 0%, #7c3aed 100%);
+            --gradient-neon: linear-gradient(135deg, #b026ff 0%, #00f5ff 100%);
+            --glow-purple: 0 0 20px rgba(176, 38, 255, 0.5);
+            --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--black-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.9)),
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920') center/cover no-repeat fixed;
+        }
+
+        .grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(176, 38, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(176, 38, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: -1; pointer-events: none;
+        }
+
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(176, 38, 255, 0.3);
+            padding: 1rem 0;
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            box-shadow: 0 5px 30px rgba(176, 38, 255, 0.2);
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo {
+            display: flex; align-items: center; gap: 1rem;
+            font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: var(--gradient-neon); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
+            text-shadow: 0 0 30px rgba(176, 38, 255, 0.5);
+        }
+
+        .logo i {
+            font-size: 2.2rem; color: var(--purple-neon);
+            -webkit-text-fill-color: var(--purple-neon);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .nav-controls { display: flex; align-items: center; gap: 1.5rem; }
+
+        .language-switcher {
+            display: flex; gap: 0.5rem;
+            background: rgba(176, 38, 255, 0.1);
+            padding: 0.3rem; border-radius: 10px;
+            border: 1px solid rgba(176, 38, 255, 0.3);
+        }
+
+        .lang-btn {
+            background: transparent; border: none; color: var(--text-secondary);
+            padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; font-weight: 600; font-size: 0.9rem;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--gradient-purple); color: white;
+            box-shadow: var(--glow-purple);
+        }
+
+        .menu-toggle {
+            background: rgba(176, 38, 255, 0.2); border: 2px solid var(--purple-neon);
+            color: var(--purple-neon); width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s; font-size: 1.3rem;
+        }
+
+        .menu-toggle:hover {
+            background: var(--purple-neon); color: white;
+            box-shadow: var(--glow-purple); transform: rotate(90deg);
+        }
+
+        .dropdown-menu {
+            position: fixed; top: 90px; right: 2rem;
+            background: rgba(26, 26, 46, 0.98); border: 2px solid var(--purple-neon);
+            border-radius: 20px; padding: 1.5rem; display: none;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem; z-index: 999; backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(176, 38, 255, 0.3);
+            max-width: 900px; max-height: 80vh; overflow-y: auto;
+        }
+
+        .dropdown-menu.active { display: grid; animation: slideDown 0.3s ease; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .menu-item {
+            display: flex; align-items: center; gap: 1rem; padding: 1.2rem;
+            background: rgba(176, 38, 255, 0.05); border: 1px solid rgba(176, 38, 255, 0.2);
+            border-radius: 12px; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; color: var(--text-primary);
+        }
+
+        .menu-item:hover {
+            background: rgba(176, 38, 255, 0.2); border-color: var(--purple-neon);
+            transform: translateX(-5px); box-shadow: var(--glow-purple);
+        }
+
+        .menu-item i { font-size: 1.5rem; color: var(--cyan-neon); }
+
+        .hero {
+            margin-top: 90px; min-height: 90vh; display: flex;
+            align-items: center; justify-content: center; position: relative; overflow: hidden;
+            background: linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.7)),
+                url('game.webp') center/cover no-repeat;
+        }
+
+        .hero::before {
+            content: ''; position: absolute; width: 600px; height: 600px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23b026ff" stroke-width="0.5" d="M100,50 Q150,100 100,150 Q50,100 100,50"/></svg>');
+            opacity: 0.1; animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .hero-content { text-align: center; z-index: 1; padding: 2rem; }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; margin-bottom: 1rem;
+            background: var(--gradient-neon); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
+            line-height: 1.2; animation: fadeInUp 0.8s ease;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--text-secondary);
+            margin-bottom: 3rem; animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .search-container { max-width: 800px; margin: 0 auto 3rem; animation: fadeInUp 0.8s ease 0.4s backwards; }
+
+        .search-box {
+            display: flex; background: rgba(26, 26, 46, 0.8); border: 2px solid var(--purple-neon);
+            border-radius: 50px; overflow: hidden; box-shadow: 0 0 30px rgba(176, 38, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .search-box:focus-within { box-shadow: 0 0 50px rgba(176, 38, 255, 0.5); border-color: var(--cyan-neon); }
+
+        .search-box input {
+            flex: 1; padding: 1.3rem 2rem; border: none; font-size: 1.1rem;
+            font-family: inherit; outline: none; background: transparent; color: var(--text-primary);
+        }
+
+        .search-box input::placeholder { color: var(--text-secondary); }
+
+        .search-box button {
+            background: var(--gradient-purple); color: white; border: none;
+            padding: 1.3rem 3rem; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; font-weight: 700;
+        }
+
+        .search-box button:hover { background: var(--gradient-neon); box-shadow: var(--glow-cyan); }
+
+        .controller-visual {
+            position: relative; width: 300px; height: 300px; margin: 3rem auto;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .controller-visual::before {
+            content: '\f11b'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            font-size: 250px; color: var(--purple-neon); opacity: 0.3;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 30px var(--purple-neon));
+        }
+
+        .stats {
+            padding: 5rem 0; background: rgba(26, 26, 46, 0.5);
+            border-top: 1px solid rgba(176, 38, 255, 0.3);
+            border-bottom: 1px solid rgba(176, 38, 255, 0.3);
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+
+        .stat-card {
+            background: rgba(176, 38, 255, 0.05); border: 2px solid rgba(176, 38, 255, 0.3);
+            border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(176, 38, 255, 0.1) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+
+        .stat-card:hover { transform: translateY(-10px); border-color: var(--purple-neon); box-shadow: var(--glow-purple); }
+        .stat-card:hover::before { opacity: 1; }
+
+        .stat-number {
+            font-size: 3.5rem; font-weight: 900; background: var(--gradient-neon);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; display: block; margin-bottom: 0.5rem;
+        }
+
+        .stat-label { color: var(--text-secondary); font-size: 1.1rem; }
+
+        .features { padding: 6rem 0; }
+
+        .section-title {
+            text-align: center; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem;
+            background: var(--gradient-neon); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900;
+        }
+
+        .section-subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 4rem; font-size: 1.2rem; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
+
+        .feature-card {
+            background: rgba(26, 26, 46, 0.6); border: 2px solid rgba(176, 38, 255, 0.2);
+            border-radius: 25px; padding: 3rem 2rem; text-align: center;
+            transition: all 0.4s; position: relative; overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(176, 38, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::after { left: 100%; }
+        .feature-card:hover { border-color: var(--purple-neon); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(176, 38, 255, 0.3); }
+
+        .feature-icon {
+            width: 100px; height: 100px; background: var(--gradient-purple);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 2rem; font-size: 2.5rem; color: white;
+            box-shadow: var(--glow-purple); transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon { transform: rotateY(360deg); box-shadow: var(--glow-cyan); }
+
+        .feature-card h3 { font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-primary); }
+        .feature-card p { color: var(--text-secondary); line-height: 1.8; }
+
+        /* Content Sections Styles */
+        .content-section {
+            padding: 5rem 0;
+            background: rgba(26, 26, 46, 0.3);
+            border-bottom: 1px solid rgba(176, 38, 255, 0.2);
+        }
+
+        .content-section:nth-child(even) { background: rgba(16, 16, 36, 0.5); }
+
+        .section-header {
+            text-align: center; margin-bottom: 3rem;
+            padding-bottom: 1.5rem; border-bottom: 2px solid var(--purple-neon);
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            background: var(--gradient-neon); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p { color: var(--text-secondary); font-size: 1.1rem; }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .content-card {
+            background: rgba(22, 33, 62, 0.8);
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .content-card:hover {
+            border-color: var(--purple-neon);
+            box-shadow: var(--glow-purple);
+            transform: translateY(-5px);
+        }
+
+        .content-card h3 {
+            color: var(--cyan-neon);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-card h3 i { color: var(--purple-neon); }
+
+        .content-card p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem; }
+
+        .content-card .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(176, 38, 255, 0.2);
+            border: 1px solid var(--purple-neon);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--purple-light);
+            margin: 0.3rem;
+        }
+
+        .news-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .news-item {
+            display: flex; gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(22, 33, 62, 0.6);
+            border-radius: 12px;
+            border-left: 3px solid var(--purple-neon);
+            transition: all 0.3s;
+        }
+
+        .news-item:hover { background: rgba(176, 38, 255, 0.1); }
+
+        .news-date {
+            min-width: 80px;
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--gradient-purple);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .news-content h4 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .news-content p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .stats-chart {
+            background: rgba(22, 33, 62, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            margin: 2rem 0;
+            gap: 1rem;
+        }
+
+        .chart-bar {
+            width: 50px;
+            background: var(--gradient-purple);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--cyan-neon);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .chart-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .partner-logo {
+            background: rgba(176, 38, 255, 0.1);
+            border: 2px solid rgba(176, 38, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .partner-logo:hover {
+            border-color: var(--purple-neon);
+            box-shadow: var(--glow-purple);
+            transform: scale(1.05);
+        }
+
+        .partner-logo i { font-size: 2.5rem; color: var(--cyan-neon); margin-bottom: 0.5rem; }
+        .partner-logo span { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .seminar-card {
+            background: rgba(22, 33, 62, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .seminar-card:hover { border-color: var(--purple-neon); box-shadow: var(--glow-purple); }
+
+        .seminar-image {
+            height: 150px;
+            background: var(--gradient-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .seminar-content { padding: 1.5rem; }
+        .seminar-content h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .seminar-content .date { color: var(--cyan-neon); font-size: 0.9rem; margin-bottom: 0.5rem; display: block; }
+        .seminar-content p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .cta {
+            padding: 6rem 0;
+            background: radial-gradient(ellipse at center, rgba(176, 38, 255, 0.2) 0%, transparent 70%);
+            text-align: center;
+            border-top: 2px solid rgba(176, 38, 255, 0.3);
+        }
+
+        .cta h2 {
+            font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem;
+            background: var(--gradient-neon); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .cta p { font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 3rem; }
+
+        .btn {
+            display: inline-block; padding: 1.2rem 3rem; background: var(--gradient-purple);
+            color: white; text-decoration: none; border-radius: 50px; font-weight: 700;
+            font-size: 1.1rem; transition: all 0.3s; margin: 0.5rem;
+            border: 2px solid transparent; position: relative; overflow: hidden;
+        }
+
+        .btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before { left: 100%; }
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(176, 38, 255, 0.4); }
+
+        .btn-outline { background: transparent; border-color: var(--purple-neon); color: var(--purple-neon); }
+        .btn-outline:hover { background: var(--purple-neon); color: white; box-shadow: var(--glow-purple); }
+
+        footer {
+            background: rgba(10, 10, 10, 0.95);
+            border-top: 2px solid rgba(176, 38, 255, 0.3);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem; margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            color: var(--purple-neon); margin-bottom: 1.5rem; font-size: 1.4rem;
+            position: relative; display: inline-block;
+        }
+
+        .footer-section h3::after {
+            content: ''; position: absolute; bottom: -8px; left: 0;
+            width: 50px; height: 3px; background: var(--gradient-neon);
+        }
+
+        .footer-section p, .footer-section a {
+            color: var(--text-secondary); text-decoration: none;
+            line-height: 2.2; transition: all 0.3s; display: block;
+        }
+
+        .footer-section a:hover {
+            color: var(--cyan-neon); padding-right: 10px;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+        }
+
+        .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+        .social-links a {
+            width: 45px; height: 45px; background: rgba(176, 38, 255, 0.1);
+            border: 2px solid var(--purple-neon); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; color: var(--purple-neon); font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--purple-neon); color: white;
+            transform: translateY(-5px) rotate(360deg);
+            box-shadow: var(--glow-purple); padding: 0;
+        }
+
+        .footer-bottom {
+            text-align: center; padding-top: 2rem;
+            border-top: 1px solid rgba(176, 38, 255, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .scroll-reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .scroll-reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .dropdown-menu { right: 1rem; left: 1rem; max-width: none; }
+            .hero { margin-top: 80px; }
+            .controller-visual { width: 200px; height: 200px; }
+            .controller-visual::before { font-size: 150px; }
+            .news-item { flex-direction: column; text-align: center; }
+            .news-date { margin: 0 auto 1rem; }
+        }
+
+        [dir="ltr"] body { font-family: 'Poppins', sans-serif; }
+        [dir="ltr"] .footer-section a:hover { padding-right: 0; padding-left: 10px; }
+        [dir="ltr"] .menu-item:hover { transform: translateX(5px); }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo"><i class="fas fa-gamepad"></i><span>Game Connect Morocco</span></div>
+            <div class="nav-controls">
+                <div class="language-switcher">
+                    <button class="lang-btn active" onclick="changeLanguage('ar')">العربية</button>
+                    <button class="lang-btn" onclick="changeLanguage('fr')">FR</button>
+                    <button class="lang-btn" onclick="changeLanguage('en')">EN</button>
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="#profile" class="menu-item"><i class="fas fa-user-plus"></i><span data-ar="إنشاء ملفات مهنية" data-fr="Créer des profils professionnels" data-en="Create Professional Profiles">إنشاء ملفات مهنية</span></a>
+        <a href="#opportunities" class="menu-item"><i class="fas fa-briefcase"></i><span data-ar="فضاء الفرص" data-fr="Espace des opportunités" data-en="Opportunities Space">فضاء الفرص</span></a>
+        <a href="#jobs" class="menu-item"><i class="fas fa-search"></i><span data-ar="عروض الشغل" data-fr="Offres d'emploi" data-en="Job Offers">عروض الشغل</span></a>
+        <a href="#news" class="menu-item"><i class="fas fa-newspaper"></i><span data-ar="آخر الأخبار" data-fr="Dernières actualités" data-en="Latest News">آخر الأخبار</span></a>
+        <a href="#market-stats" class="menu-item"><i class="fas fa-chart-line"></i><span data-ar="إحصائيات السوق" data-fr="Statistiques du marché" data-en="Market Statistics">إحصائيات السوق</span></a>
+        <a href="#activities" class="menu-item"><i class="fas fa-calendar-alt"></i><span data-ar="الأنشطة الميدانية" data-fr="Activités sur le terrain" data-en="Field Activities">الأنشطة الميدانية</span></a>
+        <a href="#guidance" class="menu-item"><i class="fas fa-compass"></i><span data-ar="محتوى توجيهي" data-fr="Contenu d'orientation" data-en="Guidance Content">محتوى توجيهي</span></a>
+        <a href="#seminars" class="menu-item"><i class="fas fa-chalkboard-teacher"></i><span data-ar="الندوات" data-fr="Séminaires" data-en="Seminars">الندوات</span></a>
+        <a href="#partnerships" class="menu-item"><i class="fas fa-handshake"></i><span data-ar="الشراكات" data-fr="Partenariats" data-en="Partnerships">الشراكات</span></a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 data-ar="بوابتك نحو عالم الألعاب الاحترافي" data-fr="Votre porte vers le monde professionnel du gaming" data-en="Your Gateway to the Professional Gaming World">بوابتك نحو عالم الألعاب الاحترافي</h1>
+                <p data-ar="اكتشف فرص عمل مثيرة في صناعة الألعاب المغربية" data-fr="Découvrez des opportunités passionnantes dans l'industrie marocaine du jeu vidéo" data-en="Discover exciting opportunities in Morocco's gaming industry">اكتشف فرص عمل مثيرة في صناعة الألعاب المغربية</p>
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" placeholder="ابحث عن وظيفة، شركة، مهارة..." id="searchInput" data-ar-placeholder="ابحث عن وظيفة، شركة، مهارة..." data-fr-placeholder="Rechercher un emploi, entreprise, compétence..." data-en-placeholder="Search for jobs, companies, skills...">
+                        <button onclick="performSearch()" data-ar="بحث" data-fr="Rechercher" data-en="Search">بحث</button>
+                    </div>
+                </div>
+                <div class="controller-visual"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title scroll-reveal" data-ar="لماذا Game Connect Morocco؟" data-fr="Pourquoi Game Connect Morocco ?" data-en="Why Game Connect Morocco?">لماذا Game Connect Morocco؟</h2>
+            <p class="section-subtitle scroll-reveal" data-ar="نحن نبني مستقبل صناعة الألعاب في المغرب" data-fr="Nous construisons l'avenir de l'industrie du jeu au Maroc" data-en="Building the future of gaming industry in Morocco">نحن نبني مستقبل صناعة الألعاب في المغرب</p>
+            <div class="features-grid">
+                <div class="feature-card scroll-reveal">
+                    <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3 data-ar="ملفات مهنية متخصصة" data-fr="Profils professionnels spécialisés" data-en="Specialized Professional Profiles">ملفات مهنية متخصصة</h3>
+                    <p data-ar="أنشئ ملفك المهني المخصص لصناعة الألعاب واعرض مهاراتك لأفضل الشركات" data-fr="Créez votre profil professionnel dédié à l'industrie du gaming et présentez vos compétences aux meilleures entreprises" data-en="Create your professional profile dedicated to the gaming industry and showcase your skills to top companies">أنشئ ملفك المهني المخصص لصناعة الألعاب واعرض مهاراتك لأفضل الشركات</p>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                    <h3 data-ar="فرص عمل حصرية" data-fr="Opportunités d'emploi exclusives" data-en="Exclusive Job Opportunities">فرص عمل حصرية</h3>
+                    <p data-ar="اكتشف عروض عمل حصرية من أفضل استوديوهات الألعاب في المغرب والعالم" data-fr="Découvrez des offres d'emploi exclusives des meilleurs studios de jeux au Maroc et dans le monde" data-en="Discover exclusive job offers from the best gaming studios in Morocco and worldwide">اكتشف عروض عمل حصرية من أفضل استوديوهات الألعاب في المغرب والعالم</p>
+                </div>
+                <div class="feature-card scroll-reveal">
+                    <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3 data-ar="توجيه وتطوير" data-fr="Orientation et développement" data-en="Guidance and Development">توجيه وتطوير</h3>
+                    <p data-ar="احصل على محتوى توجيهي وندوات لتطوير مهاراتك في صناعة الألعاب" data-fr="Bénéficiez de contenu d'orientation et de séminaires pour développer vos compétences dans l'industrie du jeu" data-en="Get guidance content and seminars to develop your skills in the gaming industry">احصل على محتوى توجيهي وندوات لتطوير مهاراتك في صناعة الألعاب</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1. Create Professional Profiles -->
+    <section id="profile" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="إنشاء ملفات مهنية" data-fr="Créer des profils professionnels" data-en="Create Professional Profiles">إنشاء ملفات مهنية</h2>
+                <p data-ar="ابنِ حضورك الرقمي في صناعة الألعاب" data-fr="Construisez votre présence numérique dans l'industrie du jeu" data-en="Build your digital presence in the gaming industry">ابنِ حضورك الرقمي في صناعة الألعاب</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3><i class="fas fa-id-card"></i> <span data-ar="ملف شخصي احترافي" data-fr="Profil professionnel" data-en="Professional Profile">ملف شخصي احترافي</span></h3>
+                    <p data-ar="أنشئ ملفًا يعكس مهاراتك وخبراتك في مجال الألعاب. أضف مشاريعك، شهاداتك، ومعرض أعمالك." data-fr="Créez un profil qui reflète vos compétences et expériences dans le domaine du gaming. Ajoutez vos projets, certifications et portfolio." data-en="Create a profile that showcases your gaming skills and experience. Add your projects, certifications, and portfolio.">أنشئ ملفًا يعكس مهاراتك وخبراتك في مجال الألعاب. أضف مشاريعك، شهاداتك، ومعرض أعمالك.</p>
+                    <span class="tag" data-ar="مجاني" data-fr="Gratuit" data-en="Free">مجاني</span>
+                    <span class="tag" data-ar="قابل للتخصيص" data-fr="Personnalisable" data-en="Customizable">قابل للتخصيص</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-laptop-code"></i> <span data-ar="معرض المشاريع" data-fr="Portfolio de projets" data-en="Project Portfolio">معرض المشاريع</span></h3>
+                    <p data-ar="اعرض ألعابك، نماذجك، أو مساهماتك في مشاريع مفتوحة المصدر. شارك روابط GitHub، itch.io، أو متجر التطبيقات." data-fr="Présentez vos jeux, démos ou contributions à des projets open source. Partagez vos liens GitHub, itch.io ou App Store." data-en="Showcase your games, demos, or open-source contributions. Share your GitHub, itch.io, or App Store links.">اعرض ألعابك، نماذجك، أو مساهماتك في مشاريع مفتوحة المصدر. شارك روابط GitHub، itch.io، أو متجر التطبيقات.</p>
+                    <span class="tag" data-ar="دعم الوسائط" data-fr="Support multimédia" data-en="Media Support">دعم الوسائط</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-signal"></i> <span data-ar="رؤية للشركات" data-fr="Visibilité entreprise" data-en="Company Visibility">رؤية للشركات</span></h3>
+                    <p data-ar="اجعل ملفك مرئيًا لأفضل استوديوهات الألعاب في المغرب والعالم. احصل على إشعارات بالفرص المناسبة لمهاراتك." data-fr="Rendez votre profil visible aux meilleurs studios de jeux au Maroc et dans le monde. Recevez des alertes d'opportunités correspondant à vos compétences." data-en="Make your profile visible to top gaming studios in Morocco and worldwide. Get alerts for opportunities matching your skills.">اجعل ملفك مرئيًا لأفضل استوديوهات الألعاب في المغرب والعالم. احصل على إشعارات بالفرص المناسبة لمهاراتك.</p>
+                    <span class="tag" data-ar="مطابقة ذكية" data-fr="Matching intelligent" data-en="Smart Matching">مطابقة ذكية</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Opportunities Space -->
+    <section id="opportunities" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="فضاء الفرص" data-fr="Espace des opportunités" data-en="Opportunities Space">فضاء الفرص</h2>
+                <p data-ar="اكتشف مسارات مهنية متنوعة في صناعة الألعاب" data-fr="Découvrez des parcours professionnels variés dans l'industrie du jeu" data-en="Discover diverse career paths in the gaming industry">اكتشف مسارات مهنية متنوعة في صناعة الألعاب</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3><i class="fas fa-code"></i> <span data-ar="تطوير الألعاب" data-fr="Développement de jeux" data-en="Game Development">تطوير الألعاب</span></h3>
+                    <p data-ar="فرص لمبرمجي Unity، Unreal Engine، Godot. مواقع: مبرمج ألعاب، مهندس أدوات، مبرمج شبكات." data-fr="Opportunités pour développeurs Unity, Unreal Engine, Godot. Postes : Programmeur jeu, Ingénieur outils, Développeur réseau." data-en="Opportunities for Unity, Unreal Engine, Godot developers. Roles: Game Programmer, Tools Engineer, Network Developer.">فرص لمبرمجي Unity، Unreal Engine، Godot. مواقع: مبرمج ألعاب، مهندس أدوات، مبرمج شبكات.</p>
+                    <span class="tag">Unity</span><span class="tag">Unreal</span><span class="tag">C#</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-palette"></i> <span data-ar="الفن والتصميم" data-fr="Art & Design" data-en="Art & Design">الفن والتصميم</span></h3>
+                    <p data-ar="مصممو الشخصيات، البيئات، الواجهات، والرسوم المتحركة. أدوات: Photoshop، Blender، Maya، Figma." data-fr="Concept artists, environnement, UI/UX, animateurs. Outils : Photoshop, Blender, Maya, Figma." data-en="Character artists, environment designers, UI/UX, animators. Tools: Photoshop, Blender, Maya, Figma.">مصممو الشخصيات، البيئات، الواجهات، والرسوم المتحركة. أدوات: Photoshop، Blender، Maya، Figma.</p>
+                    <span class="tag">2D/3D</span><span class="tag">Concept Art</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-music"></i> <span data-ar="الصوت والموسيقى" data-fr="Audio & Musique" data-en="Audio & Music">الصوت والموسيقى</span></h3>
+                    <p data-ar="مصممو الصوت، الملحنون، ومهندسو الصوت للألعاب. خبرة في FMOD، Wwise، أو DAWs مثل Reaper." data-fr="Sound designers, compositeurs, ingénieurs son pour jeux. Expérience FMOD, Wwise ou DAW comme Reaper." data-en="Sound designers, composers, audio engineers for games. Experience with FMOD, Wwise, or DAWs like Reaper.">مصممو الصوت، الملحنون، ومهندسو الصوت للألعاب. خبرة في FMOD، Wwise، أو DAWs مثل Reaper.</p>
+                    <span class="tag">FMOD</span><span class="tag">Wwise</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-bullhorn"></i> <span data-ar="التسويق والنشر" data-fr="Marketing & Publishing" data-en="Marketing & Publishing">التسويق والنشر</span></h3>
+                    <p data-ar="مديرو المجتمع، مسوقو الألعاب، ومديرو النشر. مهارات في وسائل التواصل، تحليلات، وعلاقات عامة." data-fr="Community managers, game marketers, publishing managers. Compétences en réseaux sociaux, analytics, relations publiques." data-en="Community managers, game marketers, publishing managers. Skills in social media, analytics, and PR.">مديرو المجتمع، مسوقو الألعاب، ومديرو النشر. مهارات في وسائل التواصل، تحليلات، وعلاقات عامة.</p>
+                    <span class="tag">Community</span><span class="tag">Analytics</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Job Offers -->
+    <section id="jobs" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="عروض الشغل" data-fr="Offres d'emploi" data-en="Job Offers">عروض الشغل</h2>
+                <p data-ar="أحدث الفرص المهنية في استوديوهات الألعاب المغربية والعالمية" data-fr="Dernières opportunités professionnelles dans les studios de jeux marocains et internationaux" data-en="Latest career opportunities in Moroccan and international gaming studios">أحدث الفرص المهنية في استوديوهات الألعاب المغربية والعالمية</p>
+            </div>
+            <div class="news-list">
+                <div class="news-item">
+                    <div class="news-date">15 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="مبرمج ألعاب مبتدئ - استوديو الأطلس" data-fr="Programmeur jeu junior - Atlas Studio" data-en="Junior Game Programmer - Atlas Studio">مبرمج ألعاب مبتدئ - استوديو الأطلس</h4>
+                        <p data-ar="الدار البيضاء • خبرة 0-2 سنة • Unity/C#" data-fr="Casablanca • 0-2 ans d'expérience • Unity/C#" data-en="Casablanca • 0-2 years exp • Unity/C#">الدار البيضاء • خبرة 0-2 سنة • Unity/C#</p>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">12 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="مصمم شخصيات 3D - مغرب جيمز" data-fr="Concept Artist 3D - Morocco Games" data-en="3D Character Artist - Morocco Games">مصمم شخصيات 3D - مغرب جيمز</h4>
+                        <p data-ar="عن بعد • خبرة 2-4 سنوات • Blender/Maya" data-fr="Télétravail • 2-4 ans d'expérience • Blender/Maya" data-en="Remote • 2-4 years exp • Blender/Maya">عن بعد • خبرة 2-4 سنوات • Blender/Maya</p>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">10 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="مدير مجتمع - لعبة مغربية جديدة" data-fr="Community Manager - Nouveau jeu marocain" data-en="Community Manager - New Moroccan Game">مدير مجتمع - لعبة مغربية جديدة</h4>
+                        <p data-ar="الرباط • خبرة 1-3 سنوات • وسائل التواصل" data-fr="Rabat • 1-3 ans d'expérience • Réseaux sociaux" data-en="Rabat • 1-3 years exp • Social Media">الرباط • خبرة 1-3 سنوات • وسائل التواصل</p>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">08 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="مهندس صوت ألعاب - استوديو صحراء" data-fr="Audio Engineer Jeux - Sahara Studio" data-en="Game Audio Engineer - Sahara Studio">مهندس صوت ألعاب - استوديو صحراء</h4>
+                        <p data-ar="مراكش • خبرة 3+ سنوات • FMOD/Reaper" data-fr="Marrakech • 3+ ans d'expérience • FMOD/Reaper" data-en="Marrakech • 3+ years exp • FMOD/Reaper">مراكش • خبرة 3+ سنوات • FMOD/Reaper</p>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:2rem">
+                <a href="#" class="btn btn-outline" data-ar="عرض كل العروض" data-fr="Voir toutes les offres" data-en="View All Offers">عرض كل العروض</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Latest News -->
+    <section id="news" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="آخر الأخبار" data-fr="Dernières actualités" data-en="Latest News">آخر الأخبار</h2>
+                <p data-ar="تابع آخر المستجدات في صناعة الألعاب المغربية والعالمية" data-fr="Suivez les dernières actualités de l'industrie du jeu marocaine et internationale" data-en="Follow the latest news in Moroccan and international gaming industry">تابع آخر المستجدات في صناعة الألعاب المغربية والعالمية</p>
+            </div>
+            <div class="news-list">
+                <div class="news-item">
+                    <div class="news-date">20 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="إطلاق مسابقة تطوير الألعاب المغربية 2026" data-fr="Lancement du concours de développement de jeux marocain 2026" data-en="Moroccan Game Development Competition 2026 Launched">إطلاق مسابقة تطوير الألعاب المغربية 2026</h4>
+                        <p data-ar="وزارة الرقمنة تطلق مسابقة وطنية لدعم المطورين المغاربة بجوائز تصل إلى 500,000 درهم." data-fr="Le Ministère de la Digitalisation lance un concours national pour soutenir les développeurs marocains avec des prix jusqu'à 500,000 DH." data-en="Ministry of Digitalization launches national competition supporting Moroccan developers with prizes up to 500,000 MAD.">وزارة الرقمنة تطلق مسابقة وطنية لدعم المطورين المغاربة بجوائز تصل إلى 500,000 درهم.</p>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">18 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="استوديو الأطلس يوقع شراكة مع ناشر أوروبي" data-fr="Atlas Studio signe un partenariat avec un éditeur européen" data-en="Atlas Studio Signs Partnership with European Publisher">استوديو الأطلس يوقع شراكة مع ناشر أوروبي</h4>
+                        <p data-ar="شراكة استراتيجية لنشر لعبة الأكشن المغربية الجديدة في الأسواق الأوروبية والأمريكية." data-fr="Partenariat stratégique pour publier le nouveau jeu d'action marocain sur les marchés européens et américains." data-en="Strategic partnership to publish new Moroccan action game in European and American markets.">شراكة استراتيجية لنشر لعبة الأكشن المغربية الجديدة في الأسواق الأوروبية والأمريكية.</p>
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">15 ماي</div>
+                    <div class="news-content">
+                        <h4 data-ar="ورشة عمل مجانية: أساسيات Unity للمبتدئين" data-fr="Atelier gratuit : Bases de Unity pour débutants" data-en="Free Workshop: Unity Basics for Beginners">ورشة عمل مجانية: أساسيات Unity للمبتدئين</h4>
+                        <p data-ar="Game Connect Morocco تنظم ورشة عبر الإنترنت يوم 25 ماي. التسجيل مفتوح الآن!" data-fr="Game Connect Morocco organise un atelier en ligne le 25 mai. Inscriptions ouvertes !" data-en="Game Connect Morocco hosts online workshop May 25. Registration now open!">Game Connect Morocco تنظم ورشة عبر الإنترنت يوم 25 ماي. التسجيل مفتوح الآن!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Market Statistics -->
+    <section id="market-stats" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="إحصائيات السوق" data-fr="Statistiques du marché" data-en="Market Statistics">إحصائيات السوق</h2>
+                <p data-ar="بيانات وتحليلات عن صناعة الألعاب في المغرب والعالم" data-fr="Données et analyses sur l'industrie du jeu au Maroc et dans le monde" data-en="Data and insights on Morocco's and global gaming industry">بيانات وتحليلات عن صناعة الألعاب في المغرب والعالم</p>
+            </div>
+            <div class="content-grid">
+                <div class="stats-chart">
+                    <h3 data-ar="نمو السوق المغربي" data-fr="Croissance du marché marocain" data-en="Moroccan Market Growth">نمو السوق المغربي</h3>
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height:40%" data-value="2022"></div>
+                        <div class="chart-bar" style="height:60%" data-value="2023"></div>
+                        <div class="chart-bar" style="height:85%" data-value="2024"></div>
+                        <div class="chart-bar" style="height:100%" data-value="2025"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-around;color:var(--text-secondary);font-size:0.85rem">
+                        <span>2022</span><span>2023</span><span>2024</span><span>2025</span>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-users"></i> <span data-ar="القوى العاملة" data-fr="Main-d'œuvre" data-en="Workforce">القوى العاملة</span></h3>
+                    <p data-ar="• 1,200+ محترف في صناعة الألعاب بالمغرب" data-fr="• 1 200+ professionnels dans l'industrie du jeu au Maroc" data-en="• 1,200+ gaming professionals in Morocco">• 1,200+ محترف في صناعة الألعاب بالمغرب</p>
+                    <p data-ar="• 65% تحت سن 30 سنة" data-fr="• 65% moins de 30 ans" data-en="• 65% under 30 years old">• 65% تحت سن 30 سنة</p>
+                    <p data-ar="• 40% نساء في المجال التقني" data-fr="• 40% de femmes dans les rôles techniques" data-en="• 40% women in technical roles">• 40% نساء في المجال التقني</p>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-globe-africa"></i> <span data-ar="التصدير والعولمة" data-fr="Export & Mondialisation" data-en="Export & Globalization">التصدير والعولمة</span></h3>
+                    <p data-ar="• 15 لعبة مغربية منشورة عالميًا" data-fr="• 15 jeux marocains publiés mondialement" data-en="• 15 Moroccan games published globally">• 15 لعبة مغربية منشورة عالميًا</p>
+                    <p data-ar="• شراكات مع 8 دول أوروبية" data-fr="• Partenariats avec 8 pays européens" data-en="• Partnerships with 8 European countries">• شراكات مع 8 دول أوروبية</p>
+                    <p data-ar="• عائدات التصدير: +120% سنويًا" data-fr="• Revenus d'export : +120% par an" data-en="• Export revenue: +120% annually">• عائدات التصدير: +120% سنويًا</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Field Activities -->
+    <section id="activities" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="الأنشطة الميدانية" data-fr="Activités sur le terrain" data-en="Field Activities">الأنشطة الميدانية</h2>
+                <p data-ar="فعاليات، هاكاثونات، وورش عمل مباشرة" data-fr="Événements, hackathons et ateliers en présentiel" data-en="Events, hackathons, and in-person workshops">فعاليات، هاكاثونات، وورش عمل مباشرة</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3><i class="fas fa-trophy"></i> <span data-ar="هاكاثون الألعاب المغربي" data-fr="Hackathon du Jeu Marocain" data-en="Moroccan Game Hackathon">هاكاثون الألعاب المغربي</span></h3>
+                    <p data-ar="مسابقة تطوير ألعاب لمدة 48 ساعة. فرق من جميع أنحاء المغرب تتنافس على الجوائز والشراكات." data-fr="Compétition de développement de jeux sur 48h. Équipes de tout le Maroc en compétition pour prix et partenariats." data-en="48-hour game development competition. Teams from across Morocco compete for prizes and partnerships.">مسابقة تطوير ألعاب لمدة 48 ساعة. فرق من جميع أنحاء المغرب تتنافس على الجوائز والشراكات.</p>
+                    <span class="tag" data-ar="سنوي" data-fr="Annuel" data-en="Annual">سنوي</span>
+                    <span class="tag" data-ar="جوائز نقدية" data-fr="Prix en argent" data-en="Cash Prizes">جوائز نقدية</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-chalkboard"></i> <span data-ar="ورش عمل جامعية" data-fr="Ateliers universitaires" data-en="University Workshops">ورش عمل جامعية</span></h3>
+                    <p data-ar="جولات في الجامعات المغربية لتعريف الطلاب بفرص صناعة الألعاب وتقديم التدريب العملي." data-fr="Tournées dans les universités marocaines pour présenter les opportunités du gaming et offrir une formation pratique." data-en="Tours at Moroccan universities to introduce students to gaming opportunities and provide hands-on training.">جولات في الجامعات المغربية لتعريف الطلاب بفرص صناعة الألعاب وتقديم التدريب العملي.</p>
+                    <span class="tag">10+ جامعات</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-gamepad"></i> <span data-ar="معرض الألعاب المغربي" data-fr="Salon du Jeu Marocain" data-en="Moroccan Gaming Expo">معرض الألعاب المغربي</span></h3>
+                    <p data-ar="حدث سنوي يجمع المطورين، اللاعبين، والمستثمرين. عروض حية، تجارب ألعاب، وفرص شبكية." data-fr="Événement annuel réunissant développeurs, joueurs et investisseurs. Démos live, essais de jeux et networking." data-en="Annual event bringing together developers, gamers, and investors. Live demos, game trials, and networking.">حدث سنوي يجمع المطورين، اللاعبين، والمستثمرين. عروض حية، تجارب ألعاب، وفرص شبكية.</p>
+                    <span class="tag" data-ar="نوفمبر 2026" data-fr="Novembre 2026" data-en="November 2026">نوفمبر 2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Guidance Content -->
+    <section id="guidance" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="محتوى توجيهي" data-fr="Contenu d'orientation" data-en="Guidance Content">محتوى توجيهي</h2>
+                <p data-ar="موارد تعليمية ومهنية لتطوير مسارك في الألعاب" data-fr="Ressources éducatives et professionnelles pour développer votre parcours dans le jeu" data-en="Educational and professional resources to advance your gaming career">موارد تعليمية ومهنية لتطوير مسارك في الألعاب</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3><i class="fas fa-book"></i> <span data-ar="دليل المسار المهني" data-fr="Guide de carrière" data-en="Career Path Guide">دليل المسار المهني</span></h3>
+                    <p data-ar="خرائط تفاعلية توضح المسارات المهنية في صناعة الألعاب: من المبتدئ إلى الخبير، مع المهارات المطلوبة لكل مرحلة." data-fr="Cartes interactives montrant les parcours professionnels dans l'industrie du jeu : du débutant à l'expert, avec les compétences requises à chaque étape." data-en="Interactive maps showing gaming industry career paths: from beginner to expert, with required skills at each stage.">خرائط تفاعلية توضح المسارات المهنية في صناعة الألعاب: من المبتدئ إلى الخبير، مع المهارات المطلوبة لكل مرحلة.</p>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-video"></i> <span data-ar="دروس فيديو" data-fr="Tutoriels vidéo" data-en="Video Tutorials">دروس فيديو</span></h3>
+                    <p data-ar="مكتبة مجانية من الدروس: برمجة Unity، تصميم الشخصيات، تحسين الصوت، ونشر الألعاب على المتاجر." data-fr="Bibliothèque gratuite de tutoriels : programmation Unity, design de personnages, audio, publication sur les stores." data-en="Free tutorial library: Unity programming, character design, audio, publishing to stores.">مكتبة مجانية من الدروس: برمجة Unity، تصميم الشخصيات، تحسين الصوت، ونشر الألعاب على المتاجر.</p>
+                    <span class="tag">50+ درس</span>
+                </div>
+                <div class="content-card">
+                    <h3><i class="fas fa-file-pdf"></i> <span data-ar="قوالب وملفات" data-fr="Modèles et fichiers" data-en="Templates & Files">قوالب وملفات</span></h3>
+                    <p data-ar="حمل قوالب سير ذاتية مخصصة للألعاب، خطط مشاريع، عقود عمل، وأدوات إدارة مجانية." data-fr="Téléchargez des CV modèles pour le gaming, plans de projet, contrats de travail et outils de gestion gratuits." data-en="Download gaming-specific resume templates, project plans, work contracts, and free management tools.">حمل قوالب سير ذاتية مخصصة للألعاب، خطط مشاريع، عقود عمل، وأدوات إدارة مجانية.</p>
+                    <span class="tag" data-ar="تنزيل مجاني" data-fr="Téléchargement gratuit" data-en="Free Download">تنزيل مجاني</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Seminars -->
+    <section id="seminars" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="الندوات" data-fr="Séminaires" data-en="Seminars">الندوات</h2>
+                <p data-ar="جلسات تعليمية مباشرة مع خبراء الصناعة" data-fr="Sessions éducatives en direct avec des experts de l'industrie" data-en="Live educational sessions with industry experts">جلسات تعليمية مباشرة مع خبراء الصناعة</p>
+            </div>
+            <div class="content-grid">
+                <div class="seminar-card">
+                    <div class="seminar-image"><i class="fas fa-rocket"></i></div>
+                    <div class="seminar-content">
+                        <span class="date" data-ar="25 ماي 2026 - 18:00" data-fr="25 mai 2026 - 18h00" data-en="May 25, 2026 - 6:00 PM">25 ماي 2026 - 18:00</span>
+                        <h3 data-ar="كيف تنشر لعبتك الأولى؟" data-fr="Comment publier votre premier jeu ?" data-en="How to Publish Your First Game?">كيف تنشر لعبتك الأولى؟</h3>
+                        <p data-ar="ندوة عملية مع ناشرين مغاربة وعالميين حول خطوات النشر، المتطلبات القانونية، واستراتيجيات التسويق." data-fr="Session pratique avec éditeurs marocains et internationaux sur les étapes de publication, exigences légales et stratégies marketing." data-en="Practical session with Moroccan and international publishers on publishing steps, legal requirements, and marketing strategies.">ندوة عملية مع ناشرين مغاربة وعالميين حول خطوات النشر، المتطلبات القانونية، واستراتيجيات التسويق.</p>
+                        <a href="#" class="btn btn-outline" style="padding:0.5rem 1.5rem;font-size:0.9rem" data-ar="سجّل الآن" data-fr="S'inscrire" data-en="Register Now">سجّل الآن</a>
+                    </div>
+                </div>
+                <div class="seminar-card">
+                    <div class="seminar-image"><i class="fas fa-brain"></i></div>
+                    <div class="seminar-content">
+                        <span class="date" data-ar="10 يونيو 2026 - 17:00" data-fr="10 juin 2026 - 17h00" data-en="June 10, 2026 - 5:00 PM">10 يونيو 2026 - 17:00</span>
+                        <h3 data-ar="الذكاء الاصطناعي في تطوير الألعاب" data-fr="IA dans le développement de jeux" data-en="AI in Game Development">الذكاء الاصطناعي في تطوير الألعاب</h3>
+                        <p data-ar="استكشف أدوات الذاء الاصطناعي الجديدة التي تساعد المطورين على تسريع الإنتاج وتحسين جودة الألعاب." data-fr="Découvrez les nouveaux outils d'IA aidant les développeurs à accélérer la production et améliorer la qualité des jeux." data-en="Explore new AI tools helping developers speed up production and improve game quality.">استكشف أدوات الذاء الاصطناعي الجديدة التي تساعد المطورين على تسريع الإنتاج وتحسين جودة الألعاب.</p>
+                        <a href="#" class="btn btn-outline" style="padding:0.5rem 1.5rem;font-size:0.9rem" data-ar="سجّل الآن" data-fr="S'inscrire" data-en="Register Now">سجّل الآن</a>
+                    </div>
+                </div>
+                <div class="seminar-card">
+                    <div class="seminar-image"><i class="fas fa-handshake"></i></div>
+                    <div class="seminar-content">
+                        <span class="date" data-ar="22 يونيو 2026 - 19:00" data-fr="22 juin 2026 - 19h00" data-en="June 22, 2026 - 7:00 PM">22 يونيو 2026 - 19:00</span>
+                        <h3 data-ar="بناء شبكة مهنية في الألعاب" data-fr="Construire un réseau professionnel dans le jeu" data-en="Building a Professional Network in Gaming">بناء شبكة مهنية في الألعاب</h3>
+                        <p data-ar="نصائح عملية من محترفين مغاربة وعالميين حول كيفية بناء علاقات مهنية قوية في صناعة الألعاب." data-fr="Conseils pratiques de professionnels marocains et internationaux sur la construction de relations professionnelles solides dans l'industrie du jeu." data-en="Practical tips from Moroccan and international professionals on building strong professional relationships in gaming.">نصائح عملية من محترفين مغاربة وعالميين حول كيفية بناء علاقات مهنية قوية في صناعة الألعاب.</p>
+                        <a href="#" class="btn btn-outline" style="padding:0.5rem 1.5rem;font-size:0.9rem" data-ar="سجّل الآن" data-fr="S'inscrire" data-en="Register Now">سجّل الآن</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Partnerships -->
+    <section id="partnerships" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="الشراكات" data-fr="Partenariats" data-en="Partnerships">الشراكات</h2>
+                <p data-ar="شركاؤنا من استوديوهات، جامعات، ومنظمات دعم" data-fr="Nos partenaires : studios, universités et organisations de soutien" data-en="Our partners: studios, universities, and support organizations">شركاؤنا من استوديوهات، جامعات، ومنظمات دعم</p>
+            </div>
+            <div class="partners-grid">
+                <div class="partner-logo"><i class="fas fa-university"></i><span data-ar="جامعة محمد الخامس" data-fr="Université Mohammed V" data-en="Mohammed V University">جامعة محمد الخامس</span></div>
+                <div class="partner-logo"><i class="fas fa-building"></i><span data-ar="استوديو الأطلس" data-fr="Atlas Studio" data-en="Atlas Studio">استوديو الأطلس</span></div>
+                <div class="partner-logo"><i class="fas fa-laptop-code"></i><span data-ar="مغرب جيمز" data-fr="Morocco Games" data-en="Morocco Games">مغرب جيمز</span></div>
+                <div class="partner-logo"><i class="fas fa-globe"></i><span data-ar="Unity Technologies" data-fr="Unity Technologies" data-en="Unity Technologies">Unity Technologies</span></div>
+                <div class="partner-logo"><i class="fas fa-hand-holding-heart"></i><span data-ar="وزارة الرقمنة" data-fr="Ministère de la Digitalisation" data-en="Ministry of Digitalization">وزارة الرقمنة</span></div>
+                <div class="partner-logo"><i class="fas fa-graduation-cap"></i><span data-ar="1337 Coding School" data-fr="1337 Coding School" data-en="1337 Coding School">1337 Coding School</span></div>
+            </div>
+            <div style="text-align:center;margin-top:3rem">
+                <p data-ar="هل تريد أن تصبح شريكًا؟" data-fr="Vous souhaitez devenir partenaire ?" data-en="Want to become a partner?">هل تريد أن تصبح شريكًا؟</p>
+                <a href="mailto:partners@gameconnect.ma" class="btn" style="margin-top:1rem" data-ar="تواصل معنا" data-fr="Contactez-nous" data-en="Contact Us">تواصل معنا</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2 data-ar="ابدأ رحلتك المهنية في الألعاب اليوم" data-fr="Commencez votre carrière dans le gaming aujourd'hui" data-en="Start Your Gaming Career Today">ابدأ رحلتك المهنية في الألعاب اليوم</h2>
+            <p data-ar="انضم إلى آلاف المهنيين في صناعة الألعاب المغربية" data-fr="Rejoignez des milliers de professionnels de l'industrie marocaine du jeu vidéo" data-en="Join thousands of professionals in Morocco's gaming industry">انضم إلى آلاف المهنيين في صناعة الألعاب المغربية</p>
+            <a href="#profile" class="btn" data-ar="أنشئ حسابك الآن" data-fr="Créez votre compte" data-en="Create Account">أنشئ حسابك الآن</a>
+            <a href="#opportunities" class="btn btn-outline" data-ar="استكشف الفرص" data-fr="Explorer les opportunités" data-en="Explore Opportunities">استكشف الفرص</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-ar="عن Game Connect Morocco" data-fr="À propos de Game Connect Morocco" data-en="About Game Connect Morocco">عن Game Connect Morocco</h3>
+                    <p data-ar="منصتك الأولى للبحث عن عمل والتطوير المهني في صناعة الألعاب بالمغرب" data-fr="Votre plateforme numéro un pour la recherche d'emploi et le développement professionnel dans l'industrie du jeu au Maroc" data-en="Your number one platform for job search and professional development in Morocco's gaming industry">منصتك الأولى للبحث عن عمل والتطوير المهني في صناعة الألعاب بالمغرب</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ar="روابط سريعة" data-fr="Liens rapides" data-en="Quick Links">روابط سريعة</h3>
+                    <a href="#profile" data-ar="إنشاء ملف مهني" data-fr="Créer un profil" data-en="Create Profile">إنشاء ملف مهني</a>
+                    <a href="#jobs" data-ar="عروض الشغل" data-fr="Offres d'emploi" data-en="Job Offers">عروض الشغل</a>
+                    <a href="#seminars" data-ar="الندوات" data-fr="Séminaires" data-en="Seminars">الندوات</a>
+                    <a href="#partnerships" data-ar="الشراكات" data-fr="Partenariats" data-en="Partnerships">الشراكات</a>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ar="تواصل معنا" data-fr="Contactez-nous" data-en="Contact Us">تواصل معنا</h3>
+                    <p><i class="fas fa-envelope"></i> contact@gameconnect.ma</p>
+                    <p><i class="fas fa-phone"></i> +212 5XX-XXXXXX</p>
+                    <p><i class="fas fa-map-marker-alt"></i> <span data-ar="الدار البيضاء، المغرب" data-fr="Casablanca, Maroc" data-en="Casablanca, Morocco">الدار البيضاء، المغرب</span></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Game Connect Morocco. <span data-ar="جميع الحقوق محفوظة" data-fr="Tous droits réservés" data-en="All rights reserved">جميع الحقوق محفوظة</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
+        document.addEventListener('click', e => {
+            const menu = document.getElementById('dropdownMenu');
+            if (!menu.contains(e.target) && !e.target.closest('.menu-toggle')) menu.classList.remove('active');
+        });
+        function changeLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            const html = document.documentElement;
+            html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            html.setAttribute('lang', lang);
+            document.querySelectorAll('[data-ar]').forEach(el => { el.textContent = el.getAttribute(`data-${lang}`); });
+            document.querySelectorAll('[data-ar-placeholder]').forEach(el => { el.placeholder = el.getAttribute(`data-${lang}-placeholder`); });
+        }
+        function animateCounter(el) {
+            const target = parseInt(el.getAttribute('data-target')), duration = 2000, step = target / (duration / 16);
+            let current = 0;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) { el.textContent = target + '+'; clearInterval(timer); }
+                else { el.textContent = Math.floor(current); }
+            }, 16);
+        }
+        function revealOnScroll() {
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+                    el.classList.add('active');
+                    el.querySelectorAll('.stat-number').forEach(c => {
+                        if (!c.classList.contains('counted')) { animateCounter(c); c.classList.add('counted'); }
+                    });
+                }
+            });
+        }
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+        function performSearch() { const t = document.getElementById('searchInput').value.trim(); if (t) alert('Searching for: ' + t); }
+        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const t = document.querySelector(a.getAttribute('href'));
+                if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); document.getElementById('dropdownMenu').classList.remove('active'); }
+            });
+        });
+    </script>
+</body>
+</html>
