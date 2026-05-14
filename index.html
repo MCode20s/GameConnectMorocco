@@ -6,6 +6,7 @@
     <title>Game Connect Morocco - البوابة المهنية للألعاب</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" as="image" href="game.webp" type="image/webp">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -137,90 +138,73 @@
 
         .menu-item i { font-size: 1.5rem; color: var(--cyan-neon); }
 
+        /* ✅ FIXED HERO SECTION */
         .hero {
-    margin-top: 90px;
-    min-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    
-    /* Optimized Background Image */
-    background: 
-        linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%),
-        url('game.webp') center/cover no-repeat;
-    background-attachment: scroll; /* Better mobile performance */
-    background-position: center center;
-}
-
-/* Fallback if game.webp doesn't load */
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: 
-        linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(176, 38, 255, 0.2) 100%),
-        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920') center/cover no-repeat;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
-}
-
-/* Show fallback if main image fails */
-.hero.image-failed::before {
-    opacity: 1;
-}
-
-/* Mobile Optimization */
-@media (max-width: 768px) {
-    .hero {
-        min-height: 85vh;
-        background-position: center 30%; /* Adjust focus point for mobile */
-        background-size: cover;
-    }
-    
-    .hero::before {
-        background-position: center 30%;
-    }
-}
-
-/* Landscape Mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .hero {
-        min-height: 100vh;
-        background-position: center center;
-    }
-}
-
-
-/* High-DPI/Retina Screens */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .hero {
-        background-image: 
-            linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%),
-            url('game@2x.webp') center/cover no-repeat;
-    }
-}
-
-/* Slow Connection Fallback */
-@media (max-width: 480px), (prefers-reduced-data: reduce) {
-    .hero {
-        background: 
-            linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(176, 38, 255, 0.2) 100%),
-            url('game-small.webp') center/cover no-repeat;
-    }
-}
-
-        .hero::before {
-            content: ''; position: absolute; width: 600px; height: 600px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23b026ff" stroke-width="0.5" d="M100,50 Q150,100 100,150 Q50,100 100,50"/></svg>');
-            opacity: 0.1; animation: rotate 20s linear infinite;
+            margin-top: 90px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            
+            /* Main background with game.webp + gradient overlay */
+            background: 
+                linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%),
+                url('game.webp') center/cover no-repeat;
+            background-attachment: scroll;
+            background-position: center center;
+            background-size: cover;
         }
 
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Rotating decorative pattern overlay */
+        .hero::before {
+            content: ''; 
+            position: absolute; 
+            width: 600px; 
+            height: 600px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23b026ff" stroke-width="0.5" d="M100,50 Q150,100 100,150 Q50,100 100,50"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1; 
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-        .hero-content { text-align: center; z-index: 1; padding: 2rem; }
+        @keyframes rotate { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
+
+        /* Fallback layer for when game.webp fails */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(176, 38, 255, 0.2) 100%),
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920') center/cover no-repeat;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        /* Show fallback if main image fails */
+        .hero.image-failed {
+            background-image: 
+                linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%),
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920');
+        }
+
+        /* Ensure content sits above backgrounds */
+        .hero-content { 
+            text-align: center; 
+            z-index: 2; 
+            padding: 2rem; 
+            position: relative;
+        }
 
         .hero h1 {
             font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; margin-bottom: 1rem;
@@ -264,6 +248,7 @@
         .controller-visual {
             position: relative; width: 300px; height: 300px; margin: 3rem auto;
             animation: float 6s ease-in-out infinite;
+            z-index: 1;
         }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
@@ -618,13 +603,35 @@
         .scroll-reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
         .scroll-reveal.active { opacity: 1; transform: translateY(0); }
 
+        /* ✅ Responsive Fixes for Hero */
         @media (max-width: 768px) {
             .dropdown-menu { right: 1rem; left: 1rem; max-width: none; }
-            .hero { margin-top: 80px; }
+            .hero { margin-top: 80px; min-height: 85vh; background-position: center 30%; }
             .controller-visual { width: 200px; height: 200px; }
             .controller-visual::before { font-size: 150px; }
             .news-item { flex-direction: column; text-align: center; }
             .news-date { margin: 0 auto 1rem; }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            .hero { min-height: 100vh; background-position: center center; }
+        }
+
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .hero {
+                background-image: 
+                    linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%),
+                    url('game@2x.webp');
+                background-size: cover;
+                background-position: center;
+            }
+        }
+
+        @media (prefers-reduced-data: reduce) {
+            .hero {
+                background-image: 
+                    linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(176, 38, 255, 0.2) 100%);
+            }
         }
 
         [dir="ltr"] body { font-family: 'Poppins', sans-serif; }
@@ -632,7 +639,6 @@
         [dir="ltr"] .menu-item:hover { transform: translateX(5px); }
         
     </style>
-    
 </head>
 <body>
     
@@ -671,7 +677,7 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 data-ar="بوابتك نحو عالم الألعاب الاحترافي" data-fr="Votre porte vers le monde professionnel du gaming" data-en="Your Gateway to the Professional Gaming World">بوابتك نحو عالم الألعاب الاحترافي</h1>
+                <h1 data-ar=": بوابتك نحو الاحتراف في عالم ألعاب الفيديو" data-fr="Votre porte d'entrée vers le professionnalisme dans le monde des jeux vidéo" data-en="Your gateway to professionalism in the world of video games">بوابتك نحو الاحتراف في عالم ألعاب الفيديو</h1>
                 <p data-ar="اكتشف فرص عمل مثيرة في صناعة الألعاب المغربية" data-fr="Découvrez des opportunités passionnantes dans l'industrie marocaine du jeu vidéo" data-en="Discover exciting opportunities in Morocco's gaming industry">اكتشف فرص عمل مثيرة في صناعة الألعاب المغربية</p>
                 <div class="search-container">
                     <div class="search-box">
@@ -680,6 +686,30 @@
                     </div>
                 </div>
                 <div class="controller-visual"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card scroll-reveal">
+                    <span class="stat-number" data-target="500">0</span>
+                    <span class="stat-label" data-ar="شريك في الصناعة" data-fr="Partenaires industriels" data-en="Industry Partners">شريك في الصناعة</span>
+                </div>
+                <div class="stat-card scroll-reveal">
+                    <span class="stat-number" data-target="1200">0</span>
+                    <span class="stat-label" data-ar="محترف مسجّل" data-fr="Professionnels inscrits" data-en="Registered Professionals">محترف مسجّل</span>
+                </div>
+                <div class="stat-card scroll-reveal">
+                    <span class="stat-number" data-target="85">0</span>
+                    <span class="stat-label" data-ar="فرصة عمل" data-fr="Offres d'emploi" data-en="Job Opportunities">فرصة عمل</span>
+                </div>
+                <div class="stat-card scroll-reveal">
+                    <span class="stat-number" data-target="25">0</span>
+                    <span class="stat-label" data-ar="استوديو مغربي" data-fr="Studios marocains" data-en="Moroccan Studios">استوديو مغربي</span>
+                </div>
             </div>
         </div>
     </section>
@@ -1030,7 +1060,7 @@
                 <div class="footer-section">
                     <h3 data-ar="تواصل معنا" data-fr="Contactez-nous" data-en="Contact Us">تواصل معنا</h3>
                     <p><i class="fas fa-envelope"></i> contact@gameconnect.ma</p>
-                    <p><i class="fas fa-phone"></i> +212 652‑869348</p>
+                    <p><i class="fas fa-phone"></i> +212 652‑869348</p>
                     <p><i class="fas fa-map-marker-alt"></i> <span data-ar="الرباط، المغرب" data-fr="Rabat, Maroc" data-en="Rabat, Morocco">الرباط، المغرب</span></p>
                 </div>
             </div>
@@ -1041,66 +1071,98 @@
     </footer>
 
     <script>
-        // Image fallback handler
-document.addEventListener('DOMContentLoaded', function() {
-    const hero = document.querySelector('.hero');
-    const img = new Image();
-    
-    img.onload = () => {
-        // Image loaded successfully
-        hero.style.backgroundImage = `linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(176, 38, 255, 0.3) 100%), url('game.webp')`;
-    };
-    
-    img.onerror = () => {
-        // Image failed to load, use fallback
-        hero.classList.add('image-failed');
-        console.log('Using fallback background image');
-    };
-    
-    img.src = 'game.webp';
-});
-        function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
+        // ✅ Fixed Image fallback handler for game.webp
+        document.addEventListener('DOMContentLoaded', function() {
+            const hero = document.querySelector('.hero');
+            const img = new Image();
+            
+            img.onload = () => {
+                console.log('✅ game.webp loaded successfully');
+            };
+            
+            img.onerror = () => {
+                console.log('❌ game.webp failed to load, using fallback');
+                hero.classList.add('image-failed');
+            };
+            
+            img.src = 'game.webp';
+        });
+
+        function toggleMenu() { 
+            document.getElementById('dropdownMenu').classList.toggle('active'); 
+        }
+        
         document.addEventListener('click', e => {
             const menu = document.getElementById('dropdownMenu');
-            if (!menu.contains(e.target) && !e.target.closest('.menu-toggle')) menu.classList.remove('active');
+            if (!menu.contains(e.target) && !e.target.closest('.menu-toggle')) {
+                menu.classList.remove('active');
+            }
         });
+        
         function changeLanguage(lang) {
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             const html = document.documentElement;
             html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
             html.setAttribute('lang', lang);
-            document.querySelectorAll('[data-ar]').forEach(el => { el.textContent = el.getAttribute(`data-${lang}`); });
-            document.querySelectorAll('[data-ar-placeholder]').forEach(el => { el.placeholder = el.getAttribute(`data-${lang}-placeholder`); });
+            document.querySelectorAll('[data-ar]').forEach(el => { 
+                el.textContent = el.getAttribute(`data-${lang}`); 
+            });
+            document.querySelectorAll('[data-ar-placeholder]').forEach(el => { 
+                el.placeholder = el.getAttribute(`data-${lang}-placeholder`); 
+            });
         }
+        
         function animateCounter(el) {
-            const target = parseInt(el.getAttribute('data-target')), duration = 2000, step = target / (duration / 16);
+            const target = parseInt(el.getAttribute('data-target')), 
+                  duration = 2000, 
+                  step = target / (duration / 16);
             let current = 0;
             const timer = setInterval(() => {
                 current += step;
-                if (current >= target) { el.textContent = target + '+'; clearInterval(timer); }
-                else { el.textContent = Math.floor(current); }
+                if (current >= target) { 
+                    el.textContent = target + '+'; 
+                    clearInterval(timer); 
+                } else { 
+                    el.textContent = Math.floor(current); 
+                }
             }, 16);
         }
+        
         function revealOnScroll() {
             document.querySelectorAll('.scroll-reveal').forEach(el => {
                 if (el.getBoundingClientRect().top < window.innerHeight - 100) {
                     el.classList.add('active');
                     el.querySelectorAll('.stat-number').forEach(c => {
-                        if (!c.classList.contains('counted')) { animateCounter(c); c.classList.add('counted'); }
+                        if (!c.classList.contains('counted')) { 
+                            animateCounter(c); 
+                            c.classList.add('counted'); 
+                        }
                     });
                 }
             });
         }
+        
         window.addEventListener('scroll', revealOnScroll);
         window.addEventListener('load', revealOnScroll);
-        function performSearch() { const t = document.getElementById('searchInput').value.trim(); if (t) alert('Searching for: ' + t); }
-        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+        
+        function performSearch() { 
+            const t = document.getElementById('searchInput').value.trim(); 
+            if (t) alert('Searching for: ' + t); 
+        }
+        
+        document.getElementById('searchInput').addEventListener('keypress', e => { 
+            if (e.key === 'Enter') performSearch(); 
+        });
+        
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
                 e.preventDefault();
                 const t = document.querySelector(a.getAttribute('href'));
-                if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); document.getElementById('dropdownMenu').classList.remove('active'); }
+                if (t) { 
+                    t.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+                    document.getElementById('dropdownMenu').classList.remove('active'); 
+                }
             });
         });
     </script>
